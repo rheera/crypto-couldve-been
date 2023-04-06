@@ -1,0 +1,7 @@
+{
+  "name": "crypto-couldve-been",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
