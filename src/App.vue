@@ -13,6 +13,6 @@ import { useSettingsStore } from "@/stores/SettingsStore";
 
 const settingsStore = useSettingsStore();
 onMounted(() => {
-  CheckUserDarkMode(true);
+  // CheckUserDarkMode(true);
 });
 </script>

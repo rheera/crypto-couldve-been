@@ -17,7 +17,11 @@ export function CheckUserDarkMode(addListner: boolean) {
 
   setColorScheme(colorSchemeQueryList);
 
-  addListner
-    ? colorSchemeQueryList.addEventListener("change", setColorScheme)
-    : colorSchemeQueryList.removeEventListener("change", setColorScheme);
+  if (addListner) {
+    colorSchemeQueryList.addEventListener("change", setColorScheme);
+    console.log("listner added");
+  } else {
+    colorSchemeQueryList.removeEventListener("change", setColorScheme);
+    console.log("listner removed");
+  }
 }
