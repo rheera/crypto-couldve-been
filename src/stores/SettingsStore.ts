@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
-import { CheckUserDarkMode } from "@/helpers/checkUserDarkMode";
+import { checkUserDarkMode } from "@/helpers/checkUserDarkMode";
+import { setName } from "@/helpers/persistDarkMode";
 
 export const useSettingsStore = defineStore("SettingsStore", {
   state: () => {
     return {
-      darkMode: true,
-      useSystemLightMode: false,
+      darkMode: false,
+      useSystemLightMode: true,
     };
   },
 
@@ -14,9 +15,11 @@ export const useSettingsStore = defineStore("SettingsStore", {
       this.darkMode = !this.darkMode;
       // if they want dark mode, stop listening to user's scheme
       if (this.darkMode) {
+        setName("darkMode", "true");
         document.body.classList.add("dark");
         // CheckUserDarkMode(false);
       } else {
+        setName("darkMode", "false");
         document.body.classList.remove("dark");
       }
     },
@@ -25,15 +28,19 @@ export const useSettingsStore = defineStore("SettingsStore", {
 
       // if they want to use system light mode check what their light preferences is and change to that
       if (this.useSystemLightMode) {
+        setName("darkMode", "false");
+        setName("useSystemLightMode", "true");
+
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
         toggleDarkTheme(prefersDark.matches);
         function toggleDarkTheme(shouldRemove: boolean) {
           document.body.classList.toggle("dark", shouldRemove);
         }
         this.darkMode = false;
-        CheckUserDarkMode(true);
+        checkUserDarkMode.addDarkModeListener();
       } else {
-        CheckUserDarkMode(false);
+        setName("useSystemLightMode", "false");
+        checkUserDarkMode.removeDarkModeListener();
       }
     },
   },

@@ -25,3 +25,33 @@ export function CheckUserDarkMode(addListner: boolean) {
     console.log("listner removed");
   }
 }
+
+export const checkUserDarkMode = (function () {
+  const colorSchemeQueryList = window.matchMedia(
+    "(prefers-color-scheme: dark)"
+  );
+
+  const setColorScheme = (e: MediaQueryListEvent | MediaQueryList) => {
+    // console.log(e);
+
+    if (e.matches) {
+      // Dark
+      document.body.classList.add("dark");
+    } else {
+      // Light
+      document.body.classList.remove("dark");
+    }
+  };
+
+  setColorScheme(colorSchemeQueryList);
+
+  return {
+    addDarkModeListener() {
+      colorSchemeQueryList.addEventListener("change", setColorScheme);
+    },
+
+    removeDarkModeListener() {
+      colorSchemeQueryList.removeEventListener("change", setColorScheme);
+    },
+  };
+})();
