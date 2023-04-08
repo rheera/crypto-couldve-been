@@ -2,7 +2,7 @@
   <div>
     <ion-item>
       <ion-toggle
-        @ion-change="settingsStore.toggleDarkMode"
+        @ion-change="settingsStore.toggleDarkMode(!settingsStore.darkMode)"
         :checked="settingsStore.darkMode"
         :disabled="settingsStore.useSystemLightMode"
         >Dark Mode</ion-toggle
@@ -10,7 +10,11 @@
     </ion-item>
     <ion-item>
       <ion-toggle
-        @ion-change="settingsStore.toggleUseSystemLightMode"
+        @ion-change="
+          settingsStore.toggleUseSystemLightMode(
+            !settingsStore.useSystemLightMode
+          )
+        "
         :checked="settingsStore.useSystemLightMode"
         >Use System Light/Dark Mode</ion-toggle
       >

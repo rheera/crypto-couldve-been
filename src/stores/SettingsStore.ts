@@ -11,8 +11,8 @@ export const useSettingsStore = defineStore("SettingsStore", {
   },
 
   actions: {
-    toggleDarkMode() {
-      this.darkMode = !this.darkMode;
+    toggleDarkMode(setDarkMode: boolean) {
+      this.darkMode = setDarkMode;
       // if they want dark mode, stop listening to user's scheme
       if (this.darkMode) {
         setName("darkMode", "true");
@@ -23,8 +23,8 @@ export const useSettingsStore = defineStore("SettingsStore", {
         document.body.classList.remove("dark");
       }
     },
-    toggleUseSystemLightMode() {
-      this.useSystemLightMode = !this.useSystemLightMode;
+    toggleUseSystemLightMode(setUserSystemLightMode: boolean) {
+      this.useSystemLightMode = setUserSystemLightMode;
 
       // if they want to use system light mode check what their light preferences is and change to that
       if (this.useSystemLightMode) {
@@ -40,6 +40,9 @@ export const useSettingsStore = defineStore("SettingsStore", {
         checkUserDarkMode.addDarkModeListener();
       } else {
         setName("useSystemLightMode", "false");
+        if (!this.darkMode) {
+          document.body.classList.remove("dark");
+        }
         checkUserDarkMode.removeDarkModeListener();
       }
     },
