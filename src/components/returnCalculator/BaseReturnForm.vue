@@ -68,16 +68,44 @@ import {
   IonDatetimeButton,
   IonModal,
 } from "@ionic/vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { getPrice } from "@/services/CryptoCoinDataService";
 
 const enteredStartingInvestment = ref(0);
 const enteredDesc = ref("");
 const enteredBuyingDate = ref("");
+const calculatedBuyingPrice = ref(0);
 const enteredSellingDate = ref("");
+const calculatedSellingPrice = ref(0);
 const calculatedReturn = ref(0);
 
+const enteredBuyingDateReversed = computed(() => {
+  return reverseString(enteredBuyingDate.value);
+});
+
+const enteredSellingDateReversed = computed(() => {
+  return reverseString(enteredSellingDate.value);
+});
+
+function reverseString(s: string) {
+  return s.split("-").reverse().join("-");
+}
+
+function calculateCurrentValue() {}
+
 function submitForm() {
-  calculatedReturn.value = enteredStartingInvestment.value * 2;
+  getPrice("bitcoin", enteredBuyingDateReversed.value)
+    .then((response) => {
+      console.log(response.data);
+      calculatedBuyingPrice.value = response.data.market_data.current_price.usd;
+      calculatedReturn.value =
+        enteredStartingInvestment.value / calculatedBuyingPrice.value;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  calculatedReturn.value =
+    enteredStartingInvestment.value / calculatedBuyingPrice.value;
 }
 </script>
 
