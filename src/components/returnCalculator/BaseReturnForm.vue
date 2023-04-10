@@ -8,7 +8,7 @@
           placeholder="999"
           type="number"
           required
-          v-model="enteredStartingInvestment"
+          v-model="startingInvestment"
         />
       </ion-item>
       <ion-item>
@@ -18,7 +18,7 @@
           placeholder="2010-05-22"
           type="date"
           required
-          v-model="enteredBuyingDate"
+          v-model="buyingDate"
         />
 
         <!-- <ion-datetime-button datetime="datetime"></ion-datetime-button> -->
@@ -38,7 +38,7 @@
           placeholder="2023-03-22"
           type="date"
           required
-          v-model="enteredSellingDate"
+          v-model="sellingDate"
         />
 
         <!-- <ion-datetime-button datetime="datetime"></ion-datetime-button> -->
@@ -51,7 +51,7 @@
           ></ion-datetime>
         </ion-modal> -->
       </ion-item>
-      <ion-item>Total Sold For: {{ calculatedReturn }} </ion-item>
+      <ion-item>Total Sold For: {{ calculatedSellingPrice }} </ion-item>
     </ion-list>
     <ion-button type="submit" expand="block">Save</ion-button>
   </form>
@@ -70,42 +70,66 @@ import {
 } from "@ionic/vue";
 import { ref, computed } from "vue";
 import { getPrice } from "@/services/CryptoCoinDataService";
+import { returnUpBackOutline } from "ionicons/icons";
 
-const enteredStartingInvestment = ref(0);
-const enteredDesc = ref("");
-const enteredBuyingDate = ref("");
-const calculatedBuyingPrice = ref(0);
-const enteredSellingDate = ref("");
+const startingInvestment = ref(0);
+const buyingDate = ref("");
+const coinBuyingPrice = ref(0);
+const sellingDate = ref("");
+const coinSellingPrice = ref(0);
 const calculatedSellingPrice = ref(0);
-const calculatedReturn = ref(0);
 
-const enteredBuyingDateReversed = computed(() => {
-  return reverseString(enteredBuyingDate.value);
+const buyingDateReversed = computed(() => {
+  return reverseString(buyingDate.value);
 });
 
-const enteredSellingDateReversed = computed(() => {
-  return reverseString(enteredSellingDate.value);
+const sellingDateReversed = computed(() => {
+  return reverseString(sellingDate.value);
+});
+
+const coinOwned = computed(() => {
+  return startingInvestment.value / coinBuyingPrice.value;
 });
 
 function reverseString(s: string) {
   return s.split("-").reverse().join("-");
 }
 
-function calculateCurrentValue() {}
-
-function submitForm() {
-  getPrice("bitcoin", enteredBuyingDateReversed.value)
+async function getBuyingPrice() {
+  await getPrice("bitcoin", buyingDateReversed.value)
     .then((response) => {
-      console.log(response.data);
-      calculatedBuyingPrice.value = response.data.market_data.current_price.usd;
-      calculatedReturn.value =
-        enteredStartingInvestment.value / calculatedBuyingPrice.value;
+      coinBuyingPrice.value = response.data.market_data.current_price.usd;
     })
     .catch((error) => {
       console.log(error);
     });
-  calculatedReturn.value =
-    enteredStartingInvestment.value / calculatedBuyingPrice.value;
+}
+
+async function getSellingPrice() {
+  await getPrice("bitcoin", sellingDateReversed.value)
+    .then((response) => {
+      coinSellingPrice.value = response.data.market_data.current_price.usd;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+function getTotalSoldFor(amtCoinOwned: number, priceOfCoin: number) {
+  return amtCoinOwned * priceOfCoin;
+}
+
+async function submitForm() {
+  await getBuyingPrice();
+  await getSellingPrice();
+  //   const amtOfCoinOwned = coinBuyingPrice.value * startingInvestment.value;
+  console.log("price of bough", coinBuyingPrice.value);
+  console.log("price of sold", coinSellingPrice.value);
+  console.log("coin owned", coinOwned.value);
+
+  calculatedSellingPrice.value = Number(
+    (coinOwned.value * coinSellingPrice.value).toFixed(2)
+  );
 }
 </script>
 
