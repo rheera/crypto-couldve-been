@@ -12,3 +12,7 @@ const apiClient = axios.create({
 export function getPrice(coinName: string, datePicked: string) {
   return apiClient.get(`/${coinName}/history?date=${datePicked}`);
 }
+
+export function getCoinList() {
+  return apiClient.get(`/list?include_platform=false`);
+}

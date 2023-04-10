@@ -2,6 +2,22 @@
   <form class="ion-padding" action="" @submit.prevent="submitForm">
     <ion-list>
       <ion-item>
+        <ion-select
+          aria-label="coins"
+          placeholder="Select Coin"
+          interface="popover"
+          @ion-change="selectedCoin = $event.detail.value"
+          required
+        >
+          <ion-select-option
+            v-for="coin in allCoins"
+            :key="coin.id"
+            value="coin.id"
+            >{{ coin.name }} ({{ coin.symbol }})</ion-select-option
+          >
+        </ion-select>
+      </ion-item>
+      <ion-item>
         <ion-input
           label="Starting Investement ($)"
           label-placement="floating"
@@ -62,17 +78,21 @@ import {
   IonList,
   IonItem,
   IonInput,
-  IonTextarea,
   IonButton,
+  IonSelect,
+  IonSelectOption,
   IonDatetime,
   IonDatetimeButton,
   IonModal,
 } from "@ionic/vue";
-import { ref, computed } from "vue";
-import { getPrice } from "@/services/CryptoCoinDataService";
-import { returnUpBackOutline } from "ionicons/icons";
+import { ref, Ref, computed, onMounted } from "vue";
+import { getPrice, getCoinList } from "@/services/CryptoCoinDataService";
+import {type coinNameData} from "@/data/types"
+import baseCoins from "@/data/baseCoins.json"
 
-const startingInvestment = ref(0);
+const allCoins: Ref<coinNameData[]> = ref([...baseCoins]);
+const selectedCoin = ref("bitcoin");
+const startingInvestment = ref();
 const buyingDate = ref("");
 const coinBuyingPrice = ref(0);
 const sellingDate = ref("");
@@ -96,7 +116,7 @@ function reverseString(s: string) {
 }
 
 async function getBuyingPrice() {
-  await getPrice("bitcoin", buyingDateReversed.value)
+  await getPrice(selectedCoin.value, buyingDateReversed.value)
     .then((response) => {
       coinBuyingPrice.value = response.data.market_data.current_price.usd;
     })
@@ -106,17 +126,13 @@ async function getBuyingPrice() {
 }
 
 async function getSellingPrice() {
-  await getPrice("bitcoin", sellingDateReversed.value)
+  await getPrice(selectedCoin.value, sellingDateReversed.value)
     .then((response) => {
       coinSellingPrice.value = response.data.market_data.current_price.usd;
     })
     .catch((error) => {
       console.log(error);
     });
-}
-
-function getTotalSoldFor(amtCoinOwned: number, priceOfCoin: number) {
-  return amtCoinOwned * priceOfCoin;
 }
 
 async function submitForm() {
@@ -131,6 +147,19 @@ async function submitForm() {
     (coinOwned.value * coinSellingPrice.value).toFixed(2)
   );
 }
+
+onMounted(() => {
+  /**
+   * If we wanted to load all the coins coinGecko has ... way too many
+   */
+  // getCoinList()
+  //   .then((response) => {
+  //     allCoins.value = response.data;
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
+});
 </script>
 
 <style scoped></style>
