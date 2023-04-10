@@ -1,0 +1,24 @@
+[
+  { "id": "apple", "symbol": "AAPL", "name": "Apple" },
+  { "id": "tesla", "symbol": "TSLA", "name": "Tesla" },
+  {
+    "id": "nvidia",
+    "symbol": "NVDA",
+    "name": "NVIDIA"
+  },
+  {
+    "id": "microsoft",
+    "symbol": "MSFT",
+    "name": "Microsoft"
+  },
+  {
+    "id": "amd",
+    "symbol": "AMD",
+    "name": "AMD"
+  },
+  {
+    "id": "amazon",
+    "symbol": "AMZN",
+    "name": "Amazon.com"
+  }
+]

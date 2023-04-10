@@ -24,7 +24,6 @@ const props = withDefaults(defineProps<Props>(), {
     :viewBox="`0 0 ${width} ${height}`"
     :aria-labelledby="iconName"
     role="presentation"
-    :class="`hover:fill-${hoverColor}`"
     :fill="iconColor"
   >
     <title :id="iconName" lang="en">{{ iconName }}</title>

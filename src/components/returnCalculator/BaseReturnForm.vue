@@ -99,6 +99,7 @@ const props = defineProps<{
 
 const allCoins = ref(props.investmentsList);
 const selectedCoin = ref("bitcoin");
+
 const startingInvestment = ref();
 const buyingDate = ref("");
 const coinBuyingPrice = ref(0);
