@@ -69,7 +69,10 @@
       </ion-item>
       <ion-item>Total Sold For: {{ calculatedSellingPrice }} </ion-item>
     </ion-list>
-    <ion-button type="submit" expand="block">Save</ion-button>
+    <ion-button type="submit" expand="block">
+      <p v-if="!calculating">Calculate</p>
+      <ion-spinner v-else name="crescent"></ion-spinner>
+    </ion-button>
   </form>
 </template>
 
@@ -81,6 +84,7 @@ import {
   IonButton,
   IonSelect,
   IonSelectOption,
+  IonSpinner,
   IonDatetime,
   IonDatetimeButton,
   IonModal,
@@ -88,9 +92,12 @@ import {
 import { ref, Ref, computed, onMounted } from "vue";
 import { getPrice, getCoinList } from "@/services/CryptoCoinDataService";
 import {type coinNameData} from "@/data/types"
-import baseCoins from "@/data/baseCoins.json"
 
-const allCoins: Ref<coinNameData[]> = ref([...baseCoins]);
+const props = defineProps<{
+  investmentsList: coinNameData[]
+}>();
+
+const allCoins = ref(props.investmentsList);
 const selectedCoin = ref("bitcoin");
 const startingInvestment = ref();
 const buyingDate = ref("");
@@ -98,6 +105,7 @@ const coinBuyingPrice = ref(0);
 const sellingDate = ref("");
 const coinSellingPrice = ref(0);
 const calculatedSellingPrice = ref(0);
+const calculating = ref(false)
 
 const buyingDateReversed = computed(() => {
   return reverseString(buyingDate.value);
@@ -136,16 +144,19 @@ async function getSellingPrice() {
 }
 
 async function submitForm() {
+  calculating.value = true;
   await getBuyingPrice();
   await getSellingPrice();
   //   const amtOfCoinOwned = coinBuyingPrice.value * startingInvestment.value;
-  console.log("price of bough", coinBuyingPrice.value);
-  console.log("price of sold", coinSellingPrice.value);
-  console.log("coin owned", coinOwned.value);
+  // console.log("price of bough", coinBuyingPrice.value);
+  // console.log("price of sold", coinSellingPrice.value);
+  // console.log("coin owned", coinOwned.value);
 
   calculatedSellingPrice.value = Number(
     (coinOwned.value * coinSellingPrice.value).toFixed(2)
   );
+  calculating.value = false;
+
 }
 
 onMounted(() => {
