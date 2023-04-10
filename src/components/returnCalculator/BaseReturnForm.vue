@@ -12,7 +12,7 @@
           <ion-select-option
             v-for="coin in allCoins"
             :key="coin.id"
-            value="coin.id"
+            :value="coin.id"
             >{{ coin.name }} ({{ coin.symbol }})</ion-select-option
           >
         </ion-select>
