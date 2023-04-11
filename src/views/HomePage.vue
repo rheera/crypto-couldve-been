@@ -5,22 +5,12 @@
         <ion-icon slot="icon-only" :icon="settingsOutline"></ion-icon>
       </ion-button>
     </template>
-
-    <ion-segment
-      @ion-change="whichCalculator = $event.detail.value ?? 'crypto'"
-      :value="whichCalculator"
+    <segment-layout
+      :segment-buttons-list="segmentButtons"
+      @current-segment="setCalc"
     >
-      <ion-segment-button value="crypto">
-        <BaseIcon icon-name="upvote" :width="36" :height="36"
-          ><IconBitcoin
-        /></BaseIcon>
-      </ion-segment-button>
-      <ion-segment-button value="stocks">
-        <BaseIcon icon-name="upvote" :width="36" :height="36"
-          ><IconStocks
-        /></BaseIcon>
-      </ion-segment-button>
-    </ion-segment>
+    </segment-layout>
+
     <base-return-form
       v-if="whichCalculator === 'crypto'"
       :investments-list="baseCoins"
@@ -31,16 +21,19 @@
 
 <script setup lang="ts">
 import BaseReturnForm from "@/components/returnCalculator/BaseReturnForm.vue";
-import { IonButton, IonIcon, IonSegment, IonSegmentButton } from "@ionic/vue";
-import { settingsOutline, home, heart } from "ionicons/icons";
+import SegmentLayout from "@/components/base/SegmentLayout.vue";
+import { IonButton, IonIcon } from "@ionic/vue";
+import { settingsOutline } from "ionicons/icons";
 import baseCoins from "@/data/baseCoins.json";
 import baseStocks from "@/data/baseStocks.json";
+import segmentButtons from "@/data/segmentButtons.json";
 import { ref } from "vue";
-import BaseIcon from "@/components/base/BaseIcon.vue";
-import IconBitcoin from "@/components/icons/IconBitcoin.vue";
-import IconStocks from "@/components/icons/IconStocks.vue";
 
 const whichCalculator = ref("crypto");
+
+function setCalc(currentSegment: string) {
+  whichCalculator.value = currentSegment;
+}
 </script>
 
 <style scoped></style>

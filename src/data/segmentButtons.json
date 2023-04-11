@@ -1,0 +1,12 @@
+[
+  {
+    "value": "crypto",
+    "icon": "IconBitcoin",
+    "path": "../icons/IconBitcoin.vue"
+  },
+  {
+    "value": "stocks",
+    "icon": "IconStocks",
+    "path": "../icons/IconStocks.vue"
+  }
+]
