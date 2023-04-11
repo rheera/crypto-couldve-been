@@ -3,11 +3,10 @@
     <ion-list>
       <ion-item>
         <ion-select
-          aria-label="coins"
-          placeholder="Select Coin"
+          aria-label="Investments"
+          placeholder="Select Investment"
           interface="popover"
           @ion-change="selectedCoin = $event.detail.value"
-          required
         >
           <ion-select-option
             v-for="coin in allCoins"
@@ -19,22 +18,34 @@
       </ion-item>
       <ion-item>
         <ion-input
+          ref="investmentInput"
           label="Starting Investement ($)"
           label-placement="floating"
           placeholder="999"
           type="number"
+          min="0"
           required
+          @ion-input="validate(investmentInput, $event)"
+          @ion-blur="markTouched(investmentInput)"
+          errorText="Please enter a number greater than 0"
           v-model="startingInvestment"
+          class="ion-valid"
         />
       </ion-item>
       <ion-item>
         <ion-input
+          ref="buyingInput"
           label="Starting Date"
           label-placement="floating"
           placeholder="2010-05-22"
           type="date"
           required
           v-model="buyingDate"
+          @ion-input="
+            validSellingDate(buyingDate, sellingDate, buyingInput, sellingInput)
+          "
+          @ion-blur="markTouched(buyingInput)"
+          errorText="Buying date must be before selling date"
         />
 
         <!-- <ion-datetime-button datetime="datetime"></ion-datetime-button> -->
@@ -49,12 +60,18 @@
       </ion-item>
       <ion-item>
         <ion-input
+          ref="sellingInput"
           label="Selling Date"
           label-placement="floating"
           placeholder="2023-03-22"
           type="date"
           required
           v-model="sellingDate"
+          @ion-input="
+            validSellingDate(buyingDate, sellingDate, buyingInput, sellingInput)
+          "
+          @ion-blur="markTouched(sellingInput)"
+          errorText="Selling date must be after buying date"
         />
 
         <!-- <ion-datetime-button datetime="datetime"></ion-datetime-button> -->
@@ -92,13 +109,14 @@ import {
 import { ref, Ref, computed, onMounted } from "vue";
 import { getPrice, getCoinList } from "@/services/CryptoCoinDataService";
 import {type coinNameData} from "@/data/types"
+import {validate, validateEmail, validSellingDate, markTouched} from "@/helpers/validationMethods"
 
 const props = defineProps<{
   investmentsList: coinNameData[]
 }>();
 
 const allCoins = ref(props.investmentsList);
-const selectedCoin = ref("bitcoin");
+const selectedCoin = ref(props.investmentsList[0].id);
 
 const startingInvestment = ref();
 const buyingDate = ref("");
@@ -107,6 +125,9 @@ const sellingDate = ref("");
 const coinSellingPrice = ref(0);
 const calculatedSellingPrice = ref(0);
 const calculating = ref(false)
+const investmentInput = ref(null)
+const sellingInput = ref(null)
+const buyingInput = ref(null)
 
 const buyingDateReversed = computed(() => {
   return reverseString(buyingDate.value);
@@ -160,6 +181,10 @@ async function submitForm() {
 
 }
 
+function fullValidation(event) {
+  validate(investmentInput.value, event)
+}
+
 onMounted(() => {
   /**
    * If we wanted to load all the coins coinGecko has ... way too many
@@ -171,6 +196,10 @@ onMounted(() => {
   //   .catch((error) => {
   //     console.log(error);
   //   });
+// console.log(investmentInput.value);
+
+  // investmentInput.value.focus()
+
 });
 </script>
 
