@@ -181,9 +181,6 @@ async function submitForm() {
 
 }
 
-function fullValidation(event) {
-  validate(investmentInput.value, event)
-}
 
 onMounted(() => {
   /**
